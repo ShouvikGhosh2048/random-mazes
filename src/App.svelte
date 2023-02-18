@@ -109,7 +109,8 @@
   });
 
   let isPlayerMoving = false;
-  let currentKey = null; // The last key (w,a,s,d) which was pressed down, if it is still down.
+  type Key = 'w' | 'a' | 's' | 'd' | 'ArrowUp' | 'ArrowLeft' | 'ArrowDown' | 'ArrowRight' | 'Up' | 'Left' | 'Down' | 'Right';
+  let currentKey = null as null | Key; // The last key which was pressed down, if it is still down.
   let numberOfCoins = 0;
   let gameState = 'playing' as 'playing' | 'won' | 'lost';
 
@@ -146,22 +147,22 @@
   // Movement
   $: {
     if (currentKey && gameState === 'playing' && !isPlayerMoving) {
-      if (currentKey === 'w') {
+      if (currentKey === 'w' || currentKey === 'Up' || currentKey === 'ArrowUp') {
         if (playerY > 0 && grid[playerY - 1][playerX] !== 'block') {
           playerY--;
         }
       }
-      else if (currentKey === 'a') {
+      else if (currentKey === 'a' || currentKey === 'Left' || currentKey === 'ArrowLeft') {
         if (playerX > 0 && grid[playerY][playerX - 1] !== 'block') {
           playerX--;
         }
       }
-      else if (currentKey === 's') {
+      else if (currentKey === 's' || currentKey === 'Down' || currentKey === 'ArrowDown') {
         if (playerY + 1 < grid.length && grid[playerY + 1][playerX] !== 'block') {
           playerY++;
         }
       }
-      else if (currentKey === 'd') {
+      else if (currentKey === 'd' || currentKey === 'Right' || currentKey === 'ArrowRight') {
         if (playerX + 1 < grid[0].length && grid[playerY][playerX + 1] !== 'block') {
           playerX++;
         }
@@ -280,8 +281,16 @@
 
 <svelte:window  
   on:keydown={(e) => { 
-      if (e.key === 'w' || e.key === 'a' || e.key === 's' || e.key === 'd') { 
-        currentKey = e.key; 
+      switch (e.key) {
+        case 'w':
+        case 'a':
+        case 's':
+        case 'd':
+        case 'ArrowUp':
+        case 'ArrowLeft':
+        case 'ArrowDown':
+        case 'ArrowRight':
+          currentKey = e.key;
       }
   }}
   on:keyup={(e) => {
@@ -316,6 +325,116 @@
         </div>
       </div>
     {/if}
+  </div>
+  <div class="arrows">
+    <svg width={100} height={100}
+          viewBox="0 0 100 100"
+          class="up"
+          on:touchstart={e => {
+            currentKey = 'Up';
+          }}
+          on:touchend={e => {
+            if (currentKey === 'Up') {
+              currentKey = null;
+            }
+          }}>
+      <line x1="50" y1="90"
+            x2="50" y2="10"
+            stroke="black"
+            stroke-width="5"
+            stroke-linecap="round"/>
+      <line x1="50" y1="10"
+            x2="25" y2="35"
+            stroke="black"
+            stroke-width="5"
+            stroke-linecap="round"/>
+      <line x1="50" y1="10"
+            x2="75" y2="35"
+            stroke="black"
+            stroke-width="5"
+            stroke-linecap="round"/>
+    </svg>
+    <svg width={100} height={100}
+      viewBox="0 0 100 100"
+      class="left"
+      on:touchstart={e => {
+        currentKey = 'Left';
+      }}
+      on:touchend={e => {
+        if (currentKey === 'Left') {
+          currentKey = null;
+        }
+      }}>
+      <line x1="90" y1="50"
+            x2="10" y2="50"
+            stroke="black"
+            stroke-width="5"
+            stroke-linecap="round"/>
+      <line x1="10" y1="50"
+            x2="35" y2="25"
+            stroke="black"
+            stroke-width="5"
+            stroke-linecap="round"/>
+      <line x1="10" y1="50"
+            x2="35" y2="75"
+            stroke="black"
+            stroke-width="5"
+            stroke-linecap="round"/>
+    </svg>
+    <svg width={100} height={100}
+        viewBox="0 0 100 100"
+        class="down"
+        on:touchstart={e => {
+          currentKey = 'Down';
+        }}
+        on:touchend={e => {
+          if (currentKey === 'Down') {
+            currentKey = null;
+          }
+        }}>
+      <line x1="50" y1="10"
+            x2="50" y2="90"
+            stroke="black"
+            stroke-width="5"
+            stroke-linecap="round"/>
+      <line x1="50" y1="90"
+            x2="25" y2="65"
+            stroke="black"
+            stroke-width="5"
+            stroke-linecap="round"/>
+      <line x1="50" y1="90"
+            x2="75" y2="65"
+            stroke="black"
+            stroke-width="5"
+            stroke-linecap="round"/>
+    </svg>
+    <svg width={100} height={100}
+      viewBox="0 0 100 100"
+      class="right"
+      on:touchstart={e => {
+        currentKey = 'Right';
+      }}
+      on:touchend={e => {
+        if (currentKey === 'Right') {
+          currentKey = null;
+        }
+      }}>
+        <line x1="10" y1="50"
+              x2="90" y2="50"
+              stroke="black"
+              stroke-width="5"
+              stroke-linecap="round"/>
+        <line x1="90" y1="50"
+              x2="65" y2="25"
+              stroke="black"
+              stroke-width="5"
+              stroke-linecap="round"/>
+        <line x1="90" y1="50"
+              x2="65" y2="75"
+              stroke="black"
+              stroke-width="5"
+              stroke-linecap="round"/>
+    </svg>
   </div>
 </main>
 
@@ -367,5 +486,36 @@
     border: none;
     border-radius: 3px;
     cursor: pointer;
+  }
+
+  .arrows {
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+  }
+
+  .up {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+  }
+
+  .left {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+
+  .down {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+  }
+
+  .right {
+    grid-column: 3 / 4;
+    grid-row: 2 / 3;
+  }
+
+  @media (pointer: fine) {
+    .arrows {
+      display: none;
+    }
   }
 </style>
