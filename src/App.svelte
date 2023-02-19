@@ -1,4 +1,7 @@
 <script lang="ts">
+  // https://stackoverflow.com/questions/10809995/css-disable-text-selection
+  // https://stackoverflow.com/questions/34445147/make-svg-text-unselectable
+
   import { onMount } from "svelte";
   import { tweened } from 'svelte/motion';
   import { linear } from 'svelte/easing';
@@ -491,6 +494,10 @@
   .arrows {
     display: grid;
     grid-template-columns: 100px 100px 100px;
+  }
+
+  .arrows svg {
+    user-select: none;
   }
 
   .up {
